@@ -25,6 +25,10 @@ class playGame extends Phaser.Scene {
         }
         this.addTile();
         this.addTile();
+
+        // waiting for player input
+        this.input.keyboard.on("keydown", this.handleKey, this);
+        //this.input.on("pointerup", this.handleSwipe, this);
     }
     getTilePosition(row, col) {
         var posX = gameOptions.tileSpacing * (col + 1) + gameOptions.tileSize *
@@ -62,6 +66,11 @@ class playGame extends Phaser.Scene {
                 }
             });
         }
+    }
+
+    handleKey(e){
+        var keyPressed = e.code
+        console.log("You pressed key #" + keyPressed);
     }
 }
 export default playGame
