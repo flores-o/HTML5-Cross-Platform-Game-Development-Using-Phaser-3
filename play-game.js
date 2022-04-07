@@ -7,6 +7,7 @@ class playGame extends Phaser.Scene {
     }
     create() {
         console.log("you are in playGame scene...");
+        this.canMove = false;
         this.boardArray = [];
         for (var i = 0; i < gameOptions.boardSize.rows; i++) {
             this.boardArray[i] = [];
@@ -54,7 +55,11 @@ class playGame extends Phaser.Scene {
             this.tweens.add({
                 targets: [this.boardArray[chosenTile.row][chosenTile.col].tileSprite],
                 alpha: 1,
-                duration: gameOptions.tweenSpeed
+                duration: gameOptions.tweenSpeed,
+                onComplete: function(){
+                    console.log("tween completed");
+                      this.canMove = true;
+                }
             });
         }
     }
