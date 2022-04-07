@@ -16,6 +16,7 @@ class bootGame extends Phaser.Scene {
     create() {
         console.log("game is booting...");
         this.scene.start("PlayGame");
+        //this.canMove = false;
     }
 }
 export default bootGame

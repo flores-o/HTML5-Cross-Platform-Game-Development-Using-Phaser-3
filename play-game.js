@@ -1,4 +1,5 @@
 import gameOptions from './game-options.js'
+import { LEFT, RIGHT, UP, DOWN } from './game-options.js';
 
 
 class playGame extends Phaser.Scene {
@@ -7,7 +8,7 @@ class playGame extends Phaser.Scene {
     }
     create() {
         console.log("you are in playGame scene...");
-        this.canMove = false;
+        this.canMove = false
         this.boardArray = [];
         for (var i = 0; i < gameOptions.boardSize.rows; i++) {
             this.boardArray[i] = [];
@@ -60,20 +61,44 @@ class playGame extends Phaser.Scene {
                 targets: [this.boardArray[chosenTile.row][chosenTile.col].tileSprite],
                 alpha: 1,
                 duration: gameOptions.tweenSpeed,
-                onComplete: function(){
+                callbackScope: this,
+                onComplete: function () {
                     console.log("tween completed");
-                      this.canMove = true;
-                }
+                    this.canMove = true;
+                },
             });
         }
     }
 
-    handleKey(e){
-        var keyPressed = e.code
-        console.log("You pressed key #" + keyPressed);
+    makeMove(d) {
+        console.log("about to move");
     }
 
-    handleSwipe(e){
+    handleKey(e) {
+        var keyPressed = e.code
+        if (this.canMove) {
+            switch (e.code) {
+                case "KeyA":
+                case "ArrowLeft":
+                    this.makeMove(LEFT);
+                    break;
+                case "KeyD":
+                case "ArrowRight":
+                    this.makeMove(RIGHT);
+                    break;
+                case "KeyW":
+                case "ArrowUp":
+                    this.makeMove(UP);
+                    break;
+                case "KeyS":
+                case "ArrowDown":
+                    this.makeMove(DOWN);
+                    break;
+            }
+        }
+    }
+
+    handleSwipe(e) {
         var swipeTime = e.upTime - e.downTime;
         var swipe = new Phaser.Geom.Point(e.upX - e.downX, e.upY - e.downY);
         console.log("Movement time:" + swipeTime + " ms");
