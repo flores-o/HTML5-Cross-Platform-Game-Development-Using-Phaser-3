@@ -4,5 +4,6 @@ export default {
     boardSize: {
         rows: 4,
         cols: 4
-    }
+    },
+    tweenSpeed: 2000
 }
