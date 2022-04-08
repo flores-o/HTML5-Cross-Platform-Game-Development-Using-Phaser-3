@@ -98,12 +98,28 @@ class playGame extends Phaser.Scene {
         }
     }
 
-    handleSwipe(e) {
-        var swipeTime = e.upTime - e.downTime;
-        var swipe = new Phaser.Geom.Point(e.upX - e.downX, e.upY - e.downY);
-        console.log("Movement time:" + swipeTime + " ms");
-        console.log("Horizontal distance: " + swipe.x + " pixels");
-        console.log("Vertical distance: " + swipe.y + " pixels");
+    handleSwipe(e){
+        if(this.canMove){
+            var swipeTime = e.upTime - e.downTime;
+            var fastEnough = swipeTime < gameOptions.swipeMaxTime;
+            var swipe = new Phaser.Geom.Point(e.upX - e.downX, e.upY - e.downY);
+            var swipeMagnitude = Phaser.Geom.Point.GetMagnitude(swipe);
+            var longEnough = swipeMagnitude > gameOptions.swipeMinDistance;
+            if(longEnough && fastEnough){
+                Phaser.Geom.Point.SetMagnitude(swipe, 1);
+                if(swipe.x > gameOptions.swipeMinNormal){
+                    this.makeMove(RIGHT);
+                }
+                if(swipe.x < -gameOptions.swipeMinNormal){
+                    this.makeMove(LEFT);
+                }
+                if(swipe.y > gameOptions.swipeMinNormal){
+                    this.makeMove(DOWN);
+                }
+                if(swipe.y < -gameOptions.swipeMinNormal){
+                    this.makeMove(UP);
+                }
+    } }
     }
 }
 export default playGame
