@@ -79,6 +79,7 @@ class playGame extends Phaser.Scene {
         var lastRow = gameOptions.boardSize.rows - ((d == DOWN) ? 1 : 0);
         var firstCol = (d == LEFT) ? 1 : 0;
         var lastCol = gameOptions.boardSize.cols - ((d == RIGHT) ? 1 : 0);
+        var movedSomething = false;
         for (var i = firstRow; i < lastRow; i++) {
             for (var j = firstCol; j < lastCol; j++) {
                 var curRow = dRow == 1 ? (lastRow - 1) - i : i;
@@ -92,23 +93,31 @@ class playGame extends Phaser.Scene {
                         newCol += dCol;
                     }
                     movedTiles++;
-                    this.boardArray[curRow][curCol].tileSprite.depth = movedTiles;
-                    var newPos = this.getTilePosition(curRow + dRow, curCol + dCol);
-                    this.boardArray[curRow][curCol].tileSprite.x = newPos.x;
-                    this.boardArray[curRow][curCol].tileSprite.y = newPos.y;
-                    this.boardArray[curRow][curCol].tileValue = 0;
-                    if (this.boardArray[newRow][newCol].tileValue == tileValue) {
-                        this.boardArray[newRow][newCol].tileValue++;
-                        this.boardArray[curRow]
-                        [curCol].tileSprite.setFrame(tileValue);
-                    } else {
-                        this.boardArray[newRow][newCol].tileValue = tileValue;
+                    if (newRow != curRow || newCol != curCol) {
+                        movedSomething = true;
+
+                        this.boardArray[curRow][curCol].tileSprite.depth = movedTiles;
+                        var newPos = this.getTilePosition(curRow + dRow, curCol + dCol);
+                        this.boardArray[curRow][curCol].tileSprite.x = newPos.x;
+                        this.boardArray[curRow][curCol].tileSprite.y = newPos.y;
+                        this.boardArray[curRow][curCol].tileValue = 0;
+                        if (this.boardArray[newRow][newCol].tileValue == tileValue) {
+                            this.boardArray[newRow][newCol].tileValue++;
+                            this.boardArray[curRow]
+                            [curCol].tileSprite.setFrame(tileValue);
+                        } else {
+                            this.boardArray[newRow][newCol].tileValue = tileValue;
+                        }
                     }
 
                 }
             }
         }
-        this.refreshBoard();
+        if (movedSomething) {
+            this.refreshBoard();
+        } else {
+            this.canMove = true;
+        }
     }
 
     handleKey(e) {
