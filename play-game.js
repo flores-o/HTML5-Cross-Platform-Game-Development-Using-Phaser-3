@@ -70,7 +70,7 @@ class playGame extends Phaser.Scene {
         }
     }
 
-    makeMove(d){
+    makeMove(d) {
         var dRow = (d == LEFT || d == RIGHT) ? 0 : d == UP ? -1 : 1;
         var dCol = (d == UP || d == DOWN) ? 0 : d == LEFT ? -1 : 1;
         this.canMove = false;
@@ -79,19 +79,27 @@ class playGame extends Phaser.Scene {
         var lastRow = gameOptions.boardSize.rows - ((d == DOWN) ? 1 : 0);
         var firstCol = (d == LEFT) ? 1 : 0;
         var lastCol = gameOptions.boardSize.cols - ((d == RIGHT) ? 1 : 0);
-        for(var i = firstRow; i < lastRow; i++){
-            for(var j = firstCol; j < lastCol; j++){
+        for (var i = firstRow; i < lastRow; i++) {
+            for (var j = firstCol; j < lastCol; j++) {
                 var curRow = dRow == 1 ? (lastRow - 1) - i : i;
                 var curCol = dCol == 1 ? (lastCol - 1) - j : j;
                 var tileValue = this.boardArray[curRow][curCol].tileValue;
-                if(tileValue != 0){
-                    movedTiles ++;
+                if (tileValue != 0) {
+                    var newRow = curRow;
+                    var newCol = curCol;
+                    while (this.isLegalPosition(newRow + dRow, newCol + dCol)) {
+                        newRow += dRow;
+                        newCol += dCol;
+                    }
+                    movedTiles++;
                     this.boardArray[curRow][curCol].tileSprite.depth = movedTiles;
                     var newPos = this.getTilePosition(curRow + dRow, curCol + dCol);
                     this.boardArray[curRow][curCol].tileSprite.x = newPos.x;
                     this.boardArray[curRow][curCol].tileSprite.y = newPos.y;
-    } }
-    } }
+                }
+            }
+        }
+    }
 
     handleKey(e) {
         var keyPressed = e.code
@@ -117,28 +125,34 @@ class playGame extends Phaser.Scene {
         }
     }
 
-    handleSwipe(e){
-        if(this.canMove){
+    handleSwipe(e) {
+        if (this.canMove) {
             var swipeTime = e.upTime - e.downTime;
             var fastEnough = swipeTime < gameOptions.swipeMaxTime;
             var swipe = new Phaser.Geom.Point(e.upX - e.downX, e.upY - e.downY);
             var swipeMagnitude = Phaser.Geom.Point.GetMagnitude(swipe);
             var longEnough = swipeMagnitude > gameOptions.swipeMinDistance;
-            if(longEnough && fastEnough){
+            if (longEnough && fastEnough) {
                 Phaser.Geom.Point.SetMagnitude(swipe, 1);
-                if(swipe.x > gameOptions.swipeMinNormal){
+                if (swipe.x > gameOptions.swipeMinNormal) {
                     this.makeMove(RIGHT);
                 }
-                if(swipe.x < -gameOptions.swipeMinNormal){
+                if (swipe.x < -gameOptions.swipeMinNormal) {
                     this.makeMove(LEFT);
                 }
-                if(swipe.y > gameOptions.swipeMinNormal){
+                if (swipe.y > gameOptions.swipeMinNormal) {
                     this.makeMove(DOWN);
                 }
-                if(swipe.y < -gameOptions.swipeMinNormal){
+                if (swipe.y < -gameOptions.swipeMinNormal) {
                     this.makeMove(UP);
                 }
-    } }
+            }
+        }
+    }
+    isLegalPosition(row, col){
+        var rowInside = row >= 0 && row < gameOptions.boardSize.rows;
+        var colInside = col >= 0 && col < gameOptions.boardSize.cols;
+        return rowInside && colInside;
     }
 }
 export default playGame
